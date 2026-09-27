@@ -37,7 +37,7 @@ under are pinned in `package.json` in this directory, with a lockfile:
 
 | Package | Version |
 |---|---|
-| `insumer-verify` | 1.8.7 |
+| `insumer-verify` | 1.9.2 |
 | `@noble/post-quantum` | 0.7.1 |
 
 `@noble/post-quantum` is what lets the verifier check the ML-DSA-65 companion. Without it every
@@ -57,12 +57,20 @@ to its `jwt` by `jti`, `exp` and `pass`, and the binding of the full claim set t
 vectors exercise arrived in 1.8.6. Releases before 1.8.7 verify the attestation in vectors 26 and 27
 and report nothing about the tokens beside it, so they have no `jwt` verdict to compare and call
 vector 27 as sound as vector 26; the verdict on a whole `format: "jwt"` response arrived in 1.8.7.
+Releases before 1.9.2 report vectors 11 and 19 differently: once the `kid` failed to select a key
+they reported every check failed and the companion unverifiable, whatever could still be computed.
+From 1.9.2 each check reports its own result there: the condition hashes reproduce, freshness and
+expiry report their own results, and the companion is absent on 11 (none was transmitted) and
+unverifiable on 19 (transmitted, with no preimage to rebuild it over). The expected blocks of 11
+and 19 state the 1.9.2 verdicts.
 
 The pin is the version the published verdicts were produced under, so this table is a record
-rather than a recommendation. It moved from 1.8.4 to 1.8.7 on 2026-09-20, when vectors 24 to 27
-were added: 24 and 25 need 1.8.6, and 26 and 27 need 1.8.7. Vectors 01 to 23 produce the same
-verdicts under 1.8.4, 1.8.5, 1.8.6 and 1.8.7. 1.8.5 adds a 128-level bound on canonicalization depth (`MAX_CANONICAL_DEPTH`); no
-vector here nests past 9, so none of them meets it.
+rather than a recommendation. It moved from 1.8.7 to 1.9.2 on 2026-09-27, when the expected blocks
+of vectors 11 and 19 were restated to the independent verdicts described above; before that it had
+moved from 1.8.4 to 1.8.7 on 2026-09-20, when vectors 24 to 27 were added (24 and 25 need 1.8.6,
+26 and 27 need 1.8.7). Vectors 01 to 10, 12 to 18 and 20 to 23 produce the same verdicts under
+every release from 1.8.4 to 1.9.2. 1.8.5 adds a 128-level bound on canonicalization depth
+(`MAX_CANONICAL_DEPTH`); no vector here nests past 9, so none of them meets it.
 
 ## The key material these verdicts were produced against
 
@@ -160,6 +168,8 @@ Three of the derived cases are chosen to be hard to pass by accident:
 - **11** must fail rather than fall back to another key in the JWKS. A verifier that selects
   the first key when the `kid` matches nothing will happily check an unknown or forged `kid`
   against whichever key is listed first. `insumer-verify` has refused this from 1.7.0 onward.
+  The refusal is the signature verdict's alone: the condition hashes still reproduce, freshness
+  and expiry report their own results, and the companion is absent, since none was transmitted.
 
 Vectors 24 and 25 are about what a `pqJwt` vouches for. In the JWT format the companion is a
 second compact JWS carrying the same claims as `jwt`, and a verifier binds the two by the full
@@ -194,7 +204,9 @@ another attestation is refused as well.
 Vectors 19 to 23 are about what a `kid` is allowed to do. A `kid` selects a key, a signing
 scheme, and an artifact type, and a verifier has to honour all three:
 
-- **19** has no `kid` at all. Nothing selects a key or a scheme, so nothing can be verified. It
+- **19** has no `kid` at all. Nothing selects a key or a scheme, so the signature cannot be
+  verified; the condition hashes still reproduce, and the companion it carries is unverifiable,
+  since with no `kid` there is no preimage to rebuild it over. It
   is derived from the v1-signed vector 13 because that is the case a fallback accepts: a
   verifier that defaults to the frozen bare-JSON scheme and to whatever key is at hand reports
   it valid. `insumer-verify` 1.8.0 and 1.8.1 did; 1.8.2 and later refuse it.
@@ -209,11 +221,13 @@ scheme, and an artifact type, and a verifier has to honour all three:
   companion is `unverifiable`: a mislabelled companion is evidence of nothing, and it is never
   re-interpreted under the kid the verifier expected. Without a `pqRequiredFrom` cutoff that is
   reported and not refused; under a cutoff that has passed it fails, as vector 15 does.
-- **23** is vector 11 without the JWKS fetch, which is also why the two expect different verdicts
-  from identical signed bytes. On 11 the verifier is given a JWKS, fetches it, finds no key for the
-  `kid` and fails closed on every check. On 23 it was given no JWKS URL, so it never fetches: it
-  reports the signature unverifiable against the key it holds and still completes the hash and
-  freshness checks, which do not depend on key resolution. The verifier has been given no JWKS URL and holds
+- **23** is vector 11 without the JWKS fetch. On 11 the verifier is given a JWKS, fetches it and
+  finds no key for the `kid`; on 23 it was given no JWKS URL, so it never fetches and holds only
+  its built-in key, which the `kid` does not name. Both report the signature as could-not-verify,
+  with reasons that differ, and both complete the hash, freshness and expiry checks, which do not
+  depend on key resolution, and report the companion absent. (Before `insumer-verify` 1.9.2, vector
+  11 was published with every check failed once the `kid` failed to resolve; the two now publish
+  the same verdicts from the same signed bytes.) On 23 the verifier holds
   a built-in key; the `kid` names no key it knows. It must still fail, and it must fail as
   could-not-verify rather than as forged: nothing about the signature has been shown wrong, the
   verifier simply has no key or scheme it is entitled to check it under. On the classical
@@ -308,8 +322,7 @@ historical one. A verifier that implements only v2 passes every other vector her
 vector 13, which the specification requires it to select by `kid`.
 
 Thirteen vectors carry a post-quantum companion: 12, 13, 14, 15, 17, 18, 19, 21, 22 and 24 to 27. The rest
-exercise the companion rules without carrying one, reporting `absent`, or `unverifiable` on 11
-where nothing resolves at all. Its verdict is reported separately from the classical checks (spec
+exercise the companion rules without carrying one, reporting `absent`. Its verdict is reported separately from the classical checks (spec
 Section 12, Check 6): `refuted` always fails the artifact; `absent` and
 `unverifiable` fail only under the verifier's own `pqRequiredFrom` cutoff, judged by the
 verifier's clock, never by a timestamp inside the artifact.

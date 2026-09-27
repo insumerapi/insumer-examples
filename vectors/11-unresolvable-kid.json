@@ -1,7 +1,7 @@
 {
   "vector": "11-unresolvable-kid",
   "description": "Vector 01 presented with a kid that resolves to no key in the JWKS.",
-  "note": "Must fail closed. A verifier that falls back to the first key in the document verifies an unknown or forged kid against whichever key is listed first. insumer-verify has refused this from 1.7.0; earlier versions fell back. Needs the jwksUrl option, since key resolution is only exercised when a JWKS is fetched. When the kid resolves to no key in the set, all four checks report failed regardless of local recomputability; the recompute block below shows the condition hash itself still reproduces.",
+  "note": "Must fail closed. A verifier that falls back to the first key in the document verifies an unknown or forged kid against whichever key is listed first. insumer-verify has refused this from 1.7.0; earlier versions fell back. Needs the jwksUrl option, since key resolution is only exercised when a JWKS is fetched. A kid that resolves to no key in the set fails the signature verdict alone, with a reason naming the kid it could not place. The other verdicts need no key and are reported on their own: the condition hashes are recomputed and reproduce (the recompute block below), freshness and expiry report their own results, and the companion is absent because none was transmitted, exactly as on vector 23. insumer-verify 1.9.2 and later report it this way; 1.7.0 to 1.9.1 reported every check failed and the companion unverifiable once the kid failed to resolve.",
   "options": {
     "jwksUrl": "https://insumermodel.com/.well-known/jwks.json"
   },
@@ -59,13 +59,13 @@
   "expected": {
     "checks": {
       "signature": false,
-      "conditionHashes": false,
-      "freshness": false,
+      "conditionHashes": true,
+      "freshness": true,
       "expiry": false,
-      "pq": false
+      "pq": true
     },
     "pq": {
-      "status": "unverifiable"
+      "status": "absent"
     }
   }
 }

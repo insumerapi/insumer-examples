@@ -1,7 +1,7 @@
 {
   "vector": "19-missing-kid",
   "description": "Vector 13 presented with its kid removed.",
-  "note": "Must fail. A response with no kid selects neither a key nor a signing scheme. A verifier that fills the gap, whether with the first key in the JWKS, a positional default, or its own built-in key, checks the artifact against a key the response never named and reports a signature it had no basis to verify. This vector is derived from the v1-signed vector 13 rather than from vector 01 because that is the case a fallback accepts: a v1 artifact verifies under the frozen bare-JSON scheme against the shared EC key, so a verifier that defaults to that scheme and to any available key reports it valid, companion and all. insumer-verify 1.8.0 and 1.8.1 do exactly that; 1.8.2 and later refuse a missing kid on every input path. jwksUrl is pinned so that key selection is the step that fails: with no kid there is nothing to select by, so every verdict reads failed and the companion is unverifiable, exactly as on vector 11. The recompute block shows the condition hash itself still reproduces.",
+  "note": "Must fail. A response with no kid selects neither a key nor a signing scheme. A verifier that fills the gap, whether with the first key in the JWKS, a positional default, or its own built-in key, checks the artifact against a key the response never named and reports a signature it had no basis to verify. This vector is derived from the v1-signed vector 13 rather than from vector 01 because that is the case a fallback accepts: a v1 artifact verifies under the frozen bare-JSON scheme against the shared EC key, so a verifier that defaults to that scheme and to any available key reports it valid, companion and all. insumer-verify 1.8.0 and 1.8.1 do exactly that; 1.8.2 and later refuse a missing kid on every input path. jwksUrl is pinned so that key selection is the step that fails: with no kid there is nothing to select by. That fails the signature verdict alone, with a reason saying the response carries no kid. The other verdicts need no key and are reported on their own: the condition hashes are recomputed and reproduce (the recompute block below), and freshness and expiry report their own results. The companion was transmitted, but with no kid there is no preimage to rebuild it over, so it is unverifiable, never refuted; without a pqRequiredFrom cutoff that is reported and not refused, as on vector 22. insumer-verify 1.9.2 and later report it this way; 1.8.2 to 1.9.1 reported every check failed once the kid was missing.",
   "options": {
     "jwksUrl": "https://insumermodel.com/.well-known/jwks.json"
   },
@@ -60,10 +60,10 @@
   "expected": {
     "checks": {
       "signature": false,
-      "conditionHashes": false,
-      "freshness": false,
+      "conditionHashes": true,
+      "freshness": true,
       "expiry": false,
-      "pq": false
+      "pq": true
     },
     "pq": {
       "status": "unverifiable"
