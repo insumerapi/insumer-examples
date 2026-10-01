@@ -147,7 +147,7 @@ Privacy-preserving on-chain verification. Returns signed booleans. No balances e
 
 **Endpoint routing by wallet format:**
 
-- **EVM wallets** → `POST /v1/trust` — curated multi-chain trust profile. Returns an ECDSA-signed fact profile across stablecoins, governance tokens, NFTs, staking positions, and institutional stablecoins. An EVM wallet is the mandatory anchor for this endpoint.
+- **EVM wallets** → `POST /v1/trust` — curated multi-chain trust profile. Returns an ECDSA-signed fact profile across stablecoins, governance tokens, NFTs, staking positions, institutional stablecoins, tokenized treasuries, stablecoin deposits, wrapped bitcoin and names (145 base checks on 27 chains, up to 166 on 29 with the optional wallets). An EVM wallet is the mandatory anchor for this endpoint.
 - **Non-EVM wallets (Solana, XRPL, Bitcoin, Tron, Stellar, Sui)** → `POST /v1/attest` with `format: "jwt"` and chain-appropriate conditions. The wallet lands in the signed JWT `sub` claim, making the binding cryptographic even for non-EVM formats.
 
 | Property | Value |

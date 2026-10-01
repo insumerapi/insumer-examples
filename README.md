@@ -118,7 +118,7 @@ Plus:
 - **Multiple conditions**: Up to 10 conditions per call, across any mix of 37 chains
 - **Cross-chain**: Ethereum, Base, Polygon, Arbitrum, Optimism, Avalanche, BNB Chain, XDC, Solana, XRPL, Bitcoin, Tron, Stellar, Sui, and 23 more EVM chains
 - **Merkle storage proofs**: `proof: "merkle"` adds EIP-1186 storage proofs for trustless verification against block headers: token balance slots on 27 of 31 EVM chains (not available on ZKsync Era, Sei, Viction or XDC Network, nor on any non-EVM chain), and delegation revocation slots (2 credits instead of 1)
-- **Fact profiles**: up to 50 checks across 28 chains in 9 dimensions (`POST /v1/trust`) — no score, no opinion, just cryptographically verifiable evidence organized by dimension. Batch up to 10 wallets in one call via `POST /v1/trust/batch`
+- **Fact profiles**: 145 base checks across 27 chains in 9 dimensions, up to 166 across 29 chains in 13 with the optional wallets (`POST /v1/trust`); no score, no opinion, just cryptographically verifiable evidence organized by dimension. Every check is a presence check. The signed `conditionSetVersion` (currently `2026-10`) names the check list run; log it, never reject on it. Batch up to 10 wallets in one call via `POST /v1/trust/batch`
 
 Every response is signed with ECDSA P-256. Pass the wallet auth result to downstream systems as cryptographic proof without re-querying the chain.
 

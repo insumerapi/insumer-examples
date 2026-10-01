@@ -15,10 +15,16 @@ pragma solidity ^0.8.20;
  *
  * Score derivation (off-chain, by relayer):
  *   The trust profile returns summary.totalPassed and summary.totalChecks
- *   (currently 45 base checks across 5 dimensions: stablecoins, governance, NFTs, staking,
- *   institutional stablecoins).
+ *   (145 base checks across 9 dimensions since condition set "2026-10": stablecoins,
+ *   governance, NFTs, staking, institutional stablecoins, tokenized treasuries,
+ *   stablecoin deposits, wrapped bitcoin, names; up to 166 with the optional
+ *   Solana, XRPL, Bitcoin and Tron wallets). Every check is a presence check.
  *   Score = round(totalPassed / totalChecks * 100).
- *   Example: 19/45 passed = score 42. Empty wallet = score 0.
+ *   Example: 19/145 passed = score 13. Empty wallet = score 0.
+ *   The denominator follows the signed conditionSetVersion: the 2026-10 set more than
+ *   tripled it (45 -> 145), so every score computed this way is lower than it was under
+ *   the previous set for the same holdings. A consumer that stored a threshold against
+ *   the old set must re-derive it; do not compare scores across condition sets.
  *
  * Freshness:
  *   Scores expire after 30 minutes (matching the API's expiresAt TTL).
