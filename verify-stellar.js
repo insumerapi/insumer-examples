@@ -171,11 +171,12 @@ async function main() {
     })
   );
 
-  // 5. Wallet trust profile with Stellar dimension
+  // 5. Wallet trust profile with Stellar rows evaluated
   // Trust profiles require an EVM wallet as the base. Pass stellarWallet
-  // to add institutional Stellar trustline checks (USDC, BENJI).
+  // to evaluate the Stellar trustline rows (USDC, BENJI) that sit inside
+  // institutional_stablecoins. Stellar adds no dimension of its own.
   printResult(
-    "5. Trust profile with Stellar institutional dimension",
+    "5. Trust profile with Stellar rows evaluated",
     await trust({
       wallet: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
       stellarWallet: STELLAR_WALLET,

@@ -149,7 +149,7 @@ async function main() {
 
   // 4. Wallet trust profile with Tron dimension
   // Trust profiles require an EVM wallet as the base. Pass tronWallet
-  // to add the USDT-TRC20 trust check.
+  // to add the tron dimension: three checks (USDT, USD1, WBTC on Tron).
   printResult(
     "4. Trust profile with Tron dimension",
     await trust({

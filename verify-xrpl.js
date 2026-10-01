@@ -187,11 +187,11 @@ async function main() {
     })
   );
 
-  // 6. Wallet trust profile with XRPL dimensions
+  // 6. Wallet trust profile with the XRPL dimension
   // Trust profiles require an EVM wallet as the base. Pass xrplWallet
-  // to add XRPL-specific dimensions (RLUSD, USDC trust lines).
+  // to add the xrpl dimension (RLUSD, USDC, OUSG trust lines).
   printResult(
-    "6. Trust profile with XRPL dimensions",
+    "6. Trust profile with the XRPL dimension",
     await trust({
       wallet: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
       xrplWallet: XRPL_WALLET,

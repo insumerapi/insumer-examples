@@ -153,11 +153,13 @@ async function main() {
     })
   );
 
-  // 4. Wallet trust profile with Sui dimension
+  // 4. Wallet trust profile with Sui rows evaluated
   // Trust profiles require an EVM wallet as the base. Pass suiWallet
-  // to add institutional USDC-on-Sui check.
+  // to evaluate the Sui rows that sit inside the base dimensions (USDC in
+  // institutional_stablecoins, USDY in tokenized_treasuries). Sui adds no
+  // dimension of its own.
   printResult(
-    "4. Trust profile with Sui institutional dimension",
+    "4. Trust profile with Sui rows evaluated",
     await trust({
       wallet: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
       suiWallet: SUI_WALLET,
