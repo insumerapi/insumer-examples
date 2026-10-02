@@ -3,7 +3,7 @@
 **Version:** 1.2
 **Status:** Draft
 **Date:** 2026-09-02
-**Discussion:** [insumer-examples#1](https://github.com/douglasborthwick-crypto/insumer-examples/issues/1)
+**Discussion:** [insumer-examples#1](https://github.com/insumerapi/insumer-examples/issues/1)
 **Blog posts:** [Multi-Issuer Verification](https://insumermodel.com/blog/multi-attestation-four-issuers-one-verification-pass.html) · [Would You Trust Your Agent? KYA Is Real.](https://insumermodel.com/blog/multi-attestation-spec-five-shipped-wallet-binding.html)
 
 ---
@@ -68,7 +68,7 @@ This format emerged from convergence across ten independent issuers contributing
 
 ### Reference Implementation Criteria
 
-The issuer table in Section 2 is this spec's reference set. Participation in the discussion thread ([insumer-examples#1](https://github.com/douglasborthwick-crypto/insumer-examples/issues/1)) is open and is not by itself a reference — entries are added to the table only after meeting the criteria below.
+The issuer table in Section 2 is this spec's reference set. Participation in the discussion thread ([insumer-examples#1](https://github.com/insumerapi/insumer-examples/issues/1)) is open and is not by itself a reference — entries are added to the table only after meeting the criteria below.
 
 To be added to the reference set, an implementation MUST:
 

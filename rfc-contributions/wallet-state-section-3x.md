@@ -193,7 +193,7 @@ InsumerAPI is live and can serve as a reference implementation for the `wallet_s
 | Condition tamper detection | Each result includes a `conditionHash` = SHA-256 of the canonical (sorted-key) evaluated condition JSON — consumers that submitted conditions can recompute and compare |
 | Privacy | Attestations expose boolean `met: true/false` per condition, never the underlying balance — threshold satisfaction, not position disclosure |
 
-InsumerAPI has been running in production for 37-chain wallet state evaluation since before this spec was drafted. It is already the foundation layer in `MULTI-ATTESTATION-SPEC.md` (issue [`douglasborthwick-crypto/insumer-examples#1`](https://github.com/douglasborthwick-crypto/insumer-examples/issues/1)), underneath nine specialized dimensions including three that are already reference implementations in the RFC (AgentGraph, RNWY, AgentID). The foundation shape is: `wallet_state` answers "what does this wallet hold and do on-chain," and the specialized dimensions answer adjacent questions on top of that foundation.
+InsumerAPI has been running in production for 37-chain wallet state evaluation since before this spec was drafted. It is already the foundation layer in `MULTI-ATTESTATION-SPEC.md` (issue [`insumerapi/insumer-examples#1`](https://github.com/insumerapi/insumer-examples/issues/1)), underneath nine specialized dimensions including three that are already reference implementations in the RFC (AgentGraph, RNWY, AgentID). The foundation shape is: `wallet_state` answers "what does this wallet hold and do on-chain," and the specialized dimensions answer adjacent questions on top of that foundation.
 
 ## Weighing in on the open questions
 
