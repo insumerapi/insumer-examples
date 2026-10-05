@@ -40,7 +40,7 @@ Alexander made the clearest version of this point in the thread: *"a compliance_
 Signal types that fall under this category:
 
 - **Token balance evaluation** — ERC-20, SPL, and equivalent balance thresholds against caller-supplied operators (`gt`, `gte`, `eq`, `lt`, `lte`).
-- **NFT ownership** — ERC-721 and ERC-1155 ownership checks, including contract-scoped and token-id-scoped conditions.
+- **NFT ownership** — ERC-721 style ownership checks, contract-scoped.
 - **Governance holdings** — governance token positions, delegation state, voting power snapshots.
 - **Staking positions** — LSD holdings, locked stake, unbonding state.
 - **Protocol-specific state** — position health in lending protocols, concentrated liquidity positions, perp exposure — anything exposed through a standardized read call that returns a boolean outcome against a caller-supplied threshold.
