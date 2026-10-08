@@ -190,6 +190,7 @@ Architectural pattern across the attestation contracts: InsumerAPI signs off-cha
 ## Agent SDKs
 
 - **MCP Server** (Claude, Cursor, Windsurf): `npx -y mcp-server-insumer` — [npm](https://www.npmjs.com/package/mcp-server-insumer)
+- **Hosted MCP** (no install, no key): connect by URL to `https://api.insumermodel.com/mcp` (MCP streamable HTTP) from ChatGPT, claude.ai or any hosted agent. Ten tools on a shared daily allowance: `insumer_attest`, `insumer_wallet_trust`, `insumer_batch_wallet_trust`, `insumer_compliance_templates`, `insumer_jwks`, `insumer_list_merchants`, `insumer_get_merchant`, `insumer_list_tokens`, `insumer_check_discount`, `insumer_validate_code`. No ACP/UCP discount issuance or merchant setup; for all 27 tools on your own key, use the npm server above.
 - **LangChain** (Python agents): `pip install langchain-insumer` — [PyPI](https://pypi.org/project/langchain-insumer/)
 - **GPT Actions**: Import the [OpenAPI spec](https://insumermodel.com/openapi.yaml) into any Custom GPT
 
