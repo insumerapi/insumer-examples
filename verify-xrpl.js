@@ -171,7 +171,9 @@ async function main() {
   );
 
   // 5. NFT ownership
-  // Replace with a real XRPL NFT issuer r-address
+  // contractAddress is the issuer r-address of the collection (add taxon to
+  // narrow it to one collection). This issuer is a live XRPL NFT issuer; the
+  // example wallet holds none of its NFTs, so the signed answer is false.
   printResult(
     "5. NFT ownership on XRPL",
     await attest({
@@ -179,7 +181,7 @@ async function main() {
       conditions: [
         {
           type: "nft_ownership",
-          contractAddress: "rExampleNFTIssuerAddress",
+          contractAddress: "rUDRQfn1hr84kVqQ42BoLgBsLtRgMWD4k5",
           chainId: "xrpl",
           label: "XRPL NFT holder",
         },

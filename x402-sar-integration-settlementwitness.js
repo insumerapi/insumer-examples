@@ -7,9 +7,12 @@
  * - Step 3: a live SettlementWitness call
  * - Step 4c: SAR receipt verification against the live key registry
  *
+ * SettlementWitness takes an enrolled caller key: set SAR_API_KEY and each
+ * request carries it as a Bearer token with a timestamp and a fresh nonce.
+ *
  * Usage:
- *   npm install insumer-verify jose canonicalize @noble/ed25519 @noble/hashes
- *   INSUMER_API_KEY=insr_live_... node x402-sar-integration-settlementwitness.js
+ *   npm install insumer-verify @noble/post-quantum jose canonicalize @noble/ed25519 @noble/hashes
+ *   INSUMER_API_KEY=insr_live_... SAR_API_KEY=... node x402-sar-integration-settlementwitness.js
  */
 
 
@@ -166,9 +169,16 @@ async function main() {
   console.log("Step 3: SAR receipt");
   console.log("  Calling SettlementWitness live endpoint...\n");
 
+  const sarHeaders = { "Content-Type": "application/json" };
+  if (process.env.SAR_API_KEY) {
+    sarHeaders["Authorization"] = "Bearer " + process.env.SAR_API_KEY;
+    sarHeaders["X-Settlement-Timestamp"] = String(Math.floor(Date.now() / 1000));
+    sarHeaders["X-Settlement-Nonce"] = crypto.randomBytes(16).toString("hex");
+  }
+
   const sarRes = await fetch(`${SAR_API}/settlement-witness`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: sarHeaders,
     body: JSON.stringify({
       task_id: `task-${Date.now()}`,
       agent_id: AGENT_ID,
@@ -189,6 +199,11 @@ async function main() {
 
   const sarReceipt = await sarRes.json();
 
+  if (sarRes.status === 401) {
+    console.error("SettlementWitness refused the call (401): set SAR_API_KEY to an enrolled caller key.");
+    process.exit(1);
+  }
+
   if (!sarReceipt?.receipt_v0_1) {
     console.error("SAR receipt failed or unexpected response shape:");
     console.error(JSON.stringify(sarReceipt, null, 2));
@@ -204,6 +219,23 @@ async function main() {
   // ─── Step 4: Offline verification of both artifacts ───
   console.log("Step 4: Offline verification\n");
 
+
+  // 4a. Verify the InsumerAPI attestation with insumer-verify: the ES256
+  // signature, condition hashes, expiry, the post-quantum signature, and the
+  // JWT bound to the attestation.
+  console.log("  4a. Verifying InsumerAPI attestation...");
+  try {
+    const { verifyAttestation } = await import("insumer-verify");
+    const attestVerify = await verifyAttestation(attestResult);
+    console.log(`      Valid: ${attestVerify.valid}`);
+    for (const [name, check] of Object.entries(attestVerify.checks)) {
+      if (!check) continue;
+      const status = check.status ? ` (${check.status})` : "";
+      console.log(`      ${name}: ${check.passed ? "passed" : "FAILED"}${status}`);
+    }
+  } catch (err) {
+    console.log(`      Error: ${err.message}`);
+  }
 
   // 4b. Verify JWT independently (ES256 via JWKS)
   console.log("  4b. Verifying JWT via JWKS...");

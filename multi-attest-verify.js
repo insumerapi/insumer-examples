@@ -826,6 +826,8 @@ async function main() {
         expiry: jwsExpiry(sar.jws),
       };
       console.log("[+] SAR: fetched (verdict: " + sar.payload?.verdict + ", confidence: " + sar.payload?.confidence + ")");
+    } else if (sar?.detail?.result === "UNAUTHORIZED") {
+      console.log("[-] SAR: needs an enrolled caller key (set SAR_API_KEY)");
     } else {
       console.log("[-] SAR: unexpected response format");
     }
