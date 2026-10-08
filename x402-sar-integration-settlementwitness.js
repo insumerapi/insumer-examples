@@ -149,7 +149,7 @@ async function main() {
   console.log(`  call POST ${API}/v1/trust with a JSON body { "wallet": WALLET } before transacting`);
   console.log(`  to pull a full trust profile: stablecoins, governance tokens, NFTs,`);
   console.log(`  staking, institutional stablecoins, tokenized treasuries, stablecoin`);
-  console.log(`  deposits, wrapped bitcoin and names across 27 chains`);
+  console.log(`  deposits, wrapped bitcoin, names and account code across 27 chains`);
   console.log(`  (up to 29 with optional non-EVM wallets).`);
   console.log(`  Pre-transaction trust profile + post-transaction SAR receipt`);
   console.log(`  gives both sides of the picture.\n`);

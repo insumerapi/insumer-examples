@@ -7,7 +7,7 @@
  * 3. USDC trust line token verification
  * 4. Multi-condition (XRP + RLUSD in one call)
  * 5. NFT ownership on XRPL
- * 6. Trust profile with XRPL dimensions (requires EVM wallet + xrplWallet)
+ * 6. Trust profile with the XRPL dimension (requires EVM wallet + xrplWallet)
  *
  * Usage:
  *   INSUMER_API_KEY=insr_live_... node verify-xrpl.js

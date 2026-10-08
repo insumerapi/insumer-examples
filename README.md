@@ -16,7 +16,7 @@ curl -s -X POST https://api.insumermodel.com/v1/keys/create \
   -d '{"email": "you@example.com", "appName": "my-app", "tier": "free"}'
 ```
 
-Free tier: **100 reads/day** + 10 verification credits. Or run the quickstart — it generates a key and makes a call in one step:
+Free tier: **10 free verifications plus 100 requests a day**. Or run the quickstart: it generates a key and makes a call in one step:
 
 ```bash
 bash quickstart.sh
@@ -51,15 +51,15 @@ Response — signed boolean, no balances exposed:
   "ok": true,
   "data": {
     "attestation": {
-      "id": "ATST-6DA3EB85AD032D45",
-      "pass": true,
+      "id": "ATST-881391A0EB4520C4",
+      "pass": false,
       "results": [
         {
           "condition": 0,
           "label": "USDC >= 100 on Ethereum",
           "type": "token_balance",
           "chainId": 1,
-          "met": true,
+          "met": false,
           "evaluatedCondition": {
             "type": "token_balance",
             "chainId": 1,
@@ -67,29 +67,31 @@ Response — signed boolean, no balances exposed:
             "operator": "gte",
             "threshold": "100"
           },
-          "conditionHash": "0x554251734232c8b43062f1cf2bb51b76650d13268104d74c645f4893e67ef69c",
-          "blockNumber": "0x1799043",
-          "blockTimestamp": "2026-03-26T20:04:23.000Z"
+          "conditionHash": "0x42e5e627bf7ccb39eef4319e6d0c07d4d48918eb89727905a2087e68c52d95d3",
+          "blockNumber": "0x18f0322",
+          "blockTimestamp": "2026-10-08T19:07:35.000Z"
         }
       ],
-      "passCount": 1,
-      "failCount": 0,
-      "attestedAt": "2026-03-26T20:04:33.969Z",
-      "expiresAt": "2026-03-26T20:34:33.969Z"
+      "passCount": 0,
+      "failCount": 1,
+      "attestedAt": "2026-10-08T19:07:44.174Z",
+      "expiresAt": "2026-10-08T19:37:44.174Z"
     },
-    "sig": "dmNJKqnGZ9f47qpWax9gxgw1DhUKHKHrbLspTop8NWzYhv2fNpVAt1gAuhUfU4xPsgXTCdrmTXI4vEE50dcfEA==",
-    "kid": "insumer-attest-v2"
+    "sig": "Xo/zSlKyzOvUDPe2kHN48FHr2X7Yz0eCJnTQqmyAWpi5bR90hxEjRH8RNbqqSn//oDJtZKyCIHWvIskz/1EZoQ==",
+    "kid": "insumer-attest-v2",
+    "pqSig": "f0Ga18TrdY5nLnynCGSz2ArIwZjML2S/lU/ijrgAtAW5tHePXML3fSAiY4nj029arSjUxkNddL2QYtqaMlme...",
+    "pqKid": "insumer-attest-pq1"
   },
   "meta": {
     "version": "1.0",
-    "timestamp": "2026-03-26T20:04:34.153Z",
+    "timestamp": "2026-10-08T19:07:44.371Z",
     "creditsRemaining": 9,
     "creditsCharged": 1
   }
 }
 ```
 
-Verify the signature offline via JWKS: `https://api.insumermodel.com/v1/jwks`. The JWKS has five entries over two keys. Three ECDSA P-256 `kid` labels resolve to the same P-256 key: `insumer-attest-v1` (v1 attest and v1 trust), `insumer-attest-v2` (v2 attest), `insumer-trust-v2` (v2 trust). Two ML-DSA-65 post-quantum `kid` labels resolve to the same ML-DSA-65 key: `insumer-attest-pq1` and `insumer-trust-pq1`.
+The result is signed twice: ES256 (`sig`, `kid`) and a post-quantum ML-DSA-65 signature (`pqSig`, `pqKid`; shortened above, about 4.4 KB of base64). Here the wallet held less than 100 USDC at that block, so the signed answer is `false`. Verify both signatures offline via JWKS: `https://api.insumermodel.com/v1/jwks`. The JWKS has five entries over two keys. Three ECDSA P-256 `kid` labels resolve to the same P-256 key: `insumer-attest-v1` (v1 attest and v1 trust), `insumer-attest-v2` (v2 attest), `insumer-trust-v2` (v2 trust). Two ML-DSA-65 post-quantum `kid` labels resolve to the same ML-DSA-65 key: `insumer-attest-pq1` and `insumer-trust-pq1`.
 
 Note on key versions: every newly created key is **v2** — thresholds go in as decimal **strings** (`"100"`, not `100`; a JSON number is rejected with 400) and come back as canonical decimal strings, with no `decimals` field in the response. Older v1 keys keep the numeric format and the `insumer-attest-v1` kid.
 
@@ -101,7 +103,7 @@ Note on key versions: every newly created key is **v2** — thresholds go in as 
 
 ## What Wallet Auth Covers
 
-Nine condition types, mixable in a single call:
+Ten condition types, mixable in a single call:
 
 - **Token balances** (`token_balance`): Does this wallet hold at least X of token Y on chain Z?
 - **NFT ownership** (`nft_ownership`): Does this wallet own an NFT from collection Y? 33 chains (31 EVM, Solana and XRPL), including XRPL NFTs with taxon filters
@@ -112,15 +114,16 @@ Nine condition types, mixable in a single call:
 - **Ratio to supply** (`ratio_to_supply`): Does the wallet hold >= a given fraction of an ERC-20's total supply?
 - **ERC-8004 agent registration** (`erc8004_agent`): Is this wallet the owner or bound wallet of an agent in the ERC-8004 Identity Registry on Base? Honest semantics: registration is permissionless — the signed statement is registration and binding, not vetting or reputation
 - **ERC-7710 delegation validity** (`erc7710_delegation`): Did a principal really authorize this agent wallet? Verifies the signed MetaMask Delegation Framework delegation — delegate match, declared delegator, EIP-712 signature (EOA or ERC-1271), on-chain revocation as of the anchored block, and recognized caveat enforcers. Delegation attestations expire in 5 minutes, keeping the verdict window tight
+- **Account code** (`account_code`, any EVM chain): Is this wallet a plain key (`expect: "none"`), an EIP-7702-delegated key (`"eip7702"`, optionally to a named `delegate`), or a contract (`"contract"`)? Answered as `met` only; the code and the delegation target are never returned
 
 Plus:
 
 - **Multiple conditions**: Up to 10 conditions per call, across any mix of 37 chains
 - **Cross-chain**: Ethereum, Base, Polygon, Arbitrum, Optimism, Avalanche, BNB Chain, XDC, Solana, XRPL, Bitcoin, Tron, Stellar, Sui, and 23 more EVM chains
-- **Merkle storage proofs**: `proof: "merkle"` adds EIP-1186 storage proofs for trustless verification against block headers: token balance slots on 27 of 31 EVM chains (not available on ZKsync Era, Sei, Viction or XDC Network, nor on any non-EVM chain), and delegation revocation slots (2 credits instead of 1)
-- **Fact profiles**: 145 base checks across 27 chains in 9 dimensions, up to 166 across 29 chains in 13 with the optional wallets (`POST /v1/trust`); no score, no opinion, just cryptographically verifiable evidence organized by dimension. Every check is a presence check. The signed `conditionSetVersion` (currently `2026-10`) names the check list run; log it, never reject on it. Batch up to 10 wallets in one call via `POST /v1/trust/batch`
+- **Merkle storage proofs**: `proof: "merkle"` adds EIP-1186 storage proofs for trustless verification against block headers: token balance slots on 27 of 31 EVM chains (not available on ZKsync Era, Sei, Viction or XDC Network, nor on any non-EVM chain), account proofs for native balances and `account_code`, and delegation revocation slots (2 credits instead of 1)
+- **Fact profiles**: 155 base checks across 27 chains in 10 dimensions, up to 176 across 29 chains in 14 with the optional wallets (`POST /v1/trust`); no score, no opinion, just cryptographically verifiable evidence organized by dimension. Every check is a presence check. The signed `conditionSetVersion` (currently `2026-10-08`) names the check list run; log it, never reject on it. Batch up to 10 wallets in one call via `POST /v1/trust/batch`
 
-Every response is signed with ECDSA P-256. Pass the wallet auth result to downstream systems as cryptographic proof without re-querying the chain.
+Every attest and trust response is signed twice: ES256 (ECDSA P-256) and a post-quantum ML-DSA-65 signature. Pass the wallet auth result to downstream systems as cryptographic proof without re-querying the chain.
 
 **Who uses this:**
 - **Token-gated content** — media platforms, newsletters, community access
@@ -140,7 +143,7 @@ Every response is signed with ECDSA P-256. Pass the wallet auth result to downst
 | [verify-xrpl.js](verify-xrpl.js) | Node.js | XRPL: XRP, RLUSD, USDC trust lines, NFTs, fact profiles |
 | [verify-tron.js](verify-tron.js) | Node.js | Tron: native TRX, USDT-TRC20, fact profile with Tron dimension |
 | [verify-stellar.js](verify-stellar.js) | Node.js | Stellar: native XLM, USDC trustline, BENJI trustline, fact profile |
-| [verify-sui.js](verify-sui.js) | Node.js | Sui: native SUI, USDC, fact profile with institutional dimension |
+| [verify-sui.js](verify-sui.js) | Node.js | Sui: native SUI, USDC, fact profile with Sui rows evaluated |
 | [x402-condition-gate.js](x402-condition-gate.js) | Node.js | x402 endpoint that gates free access on the payer's wallet eligibility (incl. a self-scaling `ratio_to_amount` option, `?gate=ratio`: hold >= 10x the payment) |
 | [x402-pay-per-call.js](x402-pay-per-call.js) | Node.js | Pays InsumerAPI per call via x402 — no API key: 402 quote → EIP-3009 USDC authorization on Base (or Polygon/Arbitrum/Arc via `X402_NETWORK`, e.g. `eip155:5042` for Arc) → `PAYMENT-SIGNATURE` → signed attestation + settlement receipt |
 | [x402-pay-trust.js](x402-pay-trust.js) | Node.js | Same pay-per-call flow against the trust endpoints: one $0.15 settlement each on `POST /v1/trust` and `/v1/trust/batch`, with a mid-run USDC balance check that skips cleanly instead of failing at the facilitator |
@@ -236,7 +239,7 @@ if (res.status === 503 && result.error?.code === "rpc_failure") {
 
 ## Pricing
 
-| Tier | Daily Reads | Credits | Price |
+| Tier | Daily Requests | Credits | Price |
 |------|-------------|---------|-------|
 | Free | 100/day | 10 | $0 |
 | Pro | 10,000/day | 1,000/mo | $29/mo |

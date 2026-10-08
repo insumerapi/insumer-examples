@@ -60,11 +60,12 @@ interface IWalletStateVerifier {
 ///      (RIP-7212 on L2s such as Base, Optimism, Arbitrum, Polygon, Scroll,
 ///      ZKsync, Celo; EIP-7951 on L1).
 ///
-///      Post-quantum companion: every attest response also carries an
-///      ML-DSA-65 companion (`pqSig`/`pqKid`, and `pqJwt` beside `jwt`), and
-///      the JWKS lists its key (kids insumer-attest-pq1/insumer-trust-pq1)
-///      after the three EC entries. This contract verifies the classical ES256
-///      signature only and does not consume the companion.
+///      Post-quantum signature: every attest response is signed twice, ES256
+///      and a post-quantum ML-DSA-65 signature (`pqSig`/`pqKid`, and `pqJwt`
+///      beside `jwt`), and the JWKS lists its key (kids
+///      insumer-attest-pq1/insumer-trust-pq1) after the three EC entries. This
+///      contract verifies the classical ES256 signature only and does not
+///      consume the post-quantum signature.
 ///
 /// @dev FALLBACK MODE: trusted relayer (testnet-only)
 ///      ----------------------------------------------------------------

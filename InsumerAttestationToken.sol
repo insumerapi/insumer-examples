@@ -26,7 +26,7 @@ pragma solidity ^0.8.24;
 ///      false`. The attestation kids (`insumer-attest-v1`,
 ///      `insumer-attest-v2`) share one EC key, published at
 ///      https://api.insumermodel.com/.well-known/jwks.json. The ML-DSA-65
-///      companion in the same set has no on-chain verifier and is not read.
+///      post-quantum key in the same set has no on-chain verifier and is not read.
 ///
 ///      Only a token reads as one. The attestation endpoint is the only
 ///      place the key signs a JWT. Everything else it signs (raw v1 and v2

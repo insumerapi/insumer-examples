@@ -5,7 +5,7 @@
  * 1. Native SUI balance check
  * 2. USDC on Sui (Sui-native token) balance
  * 3. Multi-condition (SUI + USDC in one call)
- * 4. Trust profile with Sui institutional dimension (requires EVM wallet + suiWallet)
+ * 4. Trust profile with Sui rows evaluated (requires EVM wallet + suiWallet)
  *
  * Sui conditions take a coin type (`address::module::Name`) as `contractAddress`:
  * "0x2::sui::SUI" for native SUI, "0xdba34672...::usdc::USDC" for USDC.

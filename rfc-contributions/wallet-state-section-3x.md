@@ -6,7 +6,7 @@
 
 **Status:** Proposed 9th provider category, parallel in shape to `compliance_risk` (Alexander Lawson, Revettr) and `transactional` / `sovereignty` (Erik Newton, Verascore).
 
-**Updated 2026-10-01:** the trust-profile figures below (check counts, dimension list, the `conditionSetVersion` example) were refreshed to the condition set live since 2026-10-01: 145 base checks across 27 chains in 9 dimensions, up to 166 across 29 in 13, and `conditionSetVersion` now a dated set id (`"2026-10"`) on every key version. The argument is unchanged; the figures as originally posted are in the git history of this file.
+**Updated 2026-10-08:** the trust-profile figures below (check counts, dimension list, the `conditionSetVersion` example) were refreshed to the current condition set: 155 base checks across 27 chains in 10 dimensions (an `account` dimension joined: contract code and EIP-7702 delegation on five EVM chains), up to 176 across 29 in 14, and `conditionSetVersion` a dated set id (`"2026-10-08"`) on every key version. The previous refresh (2026-10-01) gave 145 across 27 in 9, up to 166 across 29 in 13, under `"2026-10"`. The argument is unchanged; the figures as originally posted are in the git history of this file.
 
 ---
 
@@ -121,10 +121,10 @@ curl -X POST https://api.insumermodel.com/v1/keys/create \
 # Pull the JWKS
 curl -s https://insumermodel.com/.well-known/jwks.json
 
-# Profile a wallet across the default curated condition set (9 dimensions,
-# 145 base checks at time of writing: stablecoins, governance, NFTs, staking,
+# Profile a wallet across the default curated condition set (10 dimensions,
+# 155 base checks at time of writing: stablecoins, governance, NFTs, staking,
 # institutional stablecoins, tokenized treasuries, stablecoin deposits,
-# wrapped bitcoin, names; up to 166 checks in 13 dimensions with the optional
+# wrapped bitcoin, names, account; up to 176 checks in 14 dimensions with the optional
 # Solana, XRPL, Bitcoin and Tron wallets)
 curl -s -X POST https://api.insumermodel.com/v1/trust \
   -H "Content-Type: application/json" \
@@ -146,7 +146,7 @@ curl -s -X POST https://api.insumermodel.com/v1/attest \
   }'
 ```
 
-ES256 (P-256), JWKS at the standard path, with the signing key selected by the `kid` on the response — `insumer-attest-v2` for `/v1/attest` and `insumer-trust-v2` for `/v1/trust` on any key issued since 2026-06-10, `insumer-attest-v1` for keys created before it. The `POST /v1/trust` endpoint returns a P1363 base64 signature (88 base64 characters, 64 raw bytes) over the preimage its `kid` selects: under `insumer-trust-v2`, the domain tag `insumer.trust.v2`, a newline, then the canonical JSON of the `trust` object (keys sorted recursively, no whitespace); under the legacy `insumer-attest-v1`, `JSON.stringify(trust)` as issued. Every attest and trust response also carries a post-quantum companion signature (`pqSig`, `pqKid`; ML-DSA-65) over the same preimage, verifiable against the same JWKS. The `POST /v1/attest` endpoint returns both the raw signature and a compact JWS in the `jwt` field, with the header `{"alg":"ES256","typ":"JWT","kid":"insumer-attest-v2"}` and claims `pass`, `conditionHash[]`, `blockNumber`, `blockTimestamp`, `results[]`, `iss`, `sub`, `jti`, `iat`, `exp`. The `sub` claim is the wallet address — that is how the category stays wallet-bound inside signature scope.
+ES256 (P-256), JWKS at the standard path, with the signing key selected by the `kid` on the response: `insumer-attest-v2` for `/v1/attest` and `insumer-trust-v2` for `/v1/trust` on any key issued since 2026-06-10, `insumer-attest-v1` for keys created before it. The `POST /v1/trust` endpoint returns a P1363 base64 signature (88 base64 characters, 64 raw bytes) over the preimage its `kid` selects: under `insumer-trust-v2`, the domain tag `insumer.trust.v2`, a newline, then the canonical JSON of the `trust` object (keys sorted recursively, no whitespace); under the legacy `insumer-attest-v1`, `JSON.stringify(trust)` as issued. Every attest and trust response is signed twice: the ES256 signature and a post-quantum ML-DSA-65 signature (`pqSig`, `pqKid`) over the same preimage, verifiable against the same JWKS. The `POST /v1/attest` endpoint returns both the raw signature and a compact JWS in the `jwt` field, with the header `{"alg":"ES256","typ":"JWT","kid":"insumer-attest-v2"}` and claims `pass`, `conditionHash[]`, `blockNumber`, `blockTimestamp`, `results[]`, `iss`, `sub`, `jti`, `iat`, `exp`. The `sub` claim is the wallet address: that is how the category stays wallet-bound inside signature scope.
 
 ## TTL semantics for `wallet_state`
 
@@ -163,7 +163,7 @@ Proposing a hybrid model that fits Erik's `refresh_hint` framework:
 | `refresh_hint.max_age_seconds` | 1800 | Hard ceiling. No `wallet_state` attestation should be trusted beyond 30 minutes without refresh, even if the bound block is still within the consumer's depth tolerance. |
 | `stale_action` | `"hard_fail"` | Default fail-closed. For payment-enforcement consumers this is the safe default — concede on Alexander's same-argument reasoning for `compliance_risk`. Configurable per deployment. |
 
-For multi-chain attestations (the `POST /v1/trust` endpoint returns a single envelope containing per-condition `blockNumber` and `chainId` for each of the 145 base checks at time of writing), the `refresh_hint.bound_block_number` and `bound_chain_id` become arrays indexed by condition — or, cleaner, the whole `refresh_hint` is per-result rather than per-envelope. I think per-result is the right shape but want to discuss it.
+For multi-chain attestations (the `POST /v1/trust` endpoint returns a single envelope containing per-condition `blockNumber` and `chainId` for each of the 155 base checks at time of writing), the `refresh_hint.bound_block_number` and `bound_chain_id` become arrays indexed by condition, or, cleaner, the whole `refresh_hint` is per-result rather than per-envelope. I think per-result is the right shape but want to discuss it.
 
 The 30-minute `max_age` is not a negotiable lower bound for `wallet_state`. A consumer that wants a 5-minute refresh cycle should just re-query rather than ask the provider to emit shorter-lived signatures — the cryptographic cost dominates, and the provider already has the block number in signature scope so the consumer can always reason about staleness directly.
 
@@ -186,7 +186,7 @@ InsumerAPI is live and can serve as a reference implementation for the `wallet_s
 | Key ID | `insumer-attest-v2` (attest) / `insumer-trust-v2` (trust) / `insumer-attest-v1` (pre-2026-06-10 keys) |
 | Free key endpoint | `POST https://api.insumermodel.com/v1/keys/create` — returns the key immediately, no credit card |
 | Per-condition attestation | `POST https://api.insumermodel.com/v1/attest` — caller-supplied conditions, returns raw sig + compact JWS |
-| Curated wallet profile | `POST https://api.insumermodel.com/v1/trust` — EVM wallet, 9 dimensions (stablecoins, governance, NFTs, staking, institutional stablecoins, tokenized treasuries, stablecoin deposits, wrapped bitcoin, names), 145 base checks at time of writing; up to 166 checks in 13 dimensions with optional Solana, XRPL, Bitcoin and Tron wallets |
+| Curated wallet profile | `POST https://api.insumermodel.com/v1/trust`: EVM wallet, 10 dimensions (stablecoins, governance, NFTs, staking, institutional stablecoins, tokenized treasuries, stablecoin deposits, wrapped bitcoin, names, account), 155 base checks at time of writing; up to 176 checks in 14 dimensions with optional Solana, XRPL, Bitcoin and Tron wallets |
 | Signed payload scope | `wallet` is committed inside the signed bytes (`sub` claim for JWT, `wallet` field for `POST /v1/trust`) |
 | Chain coverage | 37 chains — 31 EVM (including Ethereum, Base, Arbitrum, Optimism, Polygon, BNB, Avalanche, XDC, Linea, Scroll, zkSync, Celo, Gnosis, and others) + Solana + XRPL + Bitcoin + Tron + Stellar + Sui |
 | Signature format | P1363 base64 (64 bytes) for raw signatures, or compact JWS when `format: "jwt"` is requested on `/v1/attest` |
@@ -231,7 +231,7 @@ There is one edge case worth flagging: the `evaluatedCondition` object inside ea
 
 ### Schema versioning
 
-Agreed with @eriknewton's `envelope_version: "1.0.0"` proposal at the top level with semver, and providers committing to supporting at least N and N-1 major versions during a 6-month deprecation window. For `wallet_state` specifically, there is one additional versioning axis worth naming: the **condition set version** for curated wallet profiles (`POST /v1/trust` style endpoints). InsumerAPI already emits `conditionSetVersion` as a signed field: a dated set id (`"2026-10"` at time of writing), the same on every key version, that names the check list run; readers log it and must not reject on it. When a curated set changes (new chain added, new dimension added, operator semantics tweaked), a signed version field of this kind is what lets a consumer that pinned one version explicitly decide whether to accept another. This is cleaner than conflating condition set evolution with envelope schema evolution.
+Agreed with @eriknewton's `envelope_version: "1.0.0"` proposal at the top level with semver, and providers committing to supporting at least N and N-1 major versions during a 6-month deprecation window. For `wallet_state` specifically, there is one additional versioning axis worth naming: the **condition set version** for curated wallet profiles (`POST /v1/trust` style endpoints). InsumerAPI already emits `conditionSetVersion` as a signed field: a dated set id (`"2026-10-08"` at time of writing), the same on every key version, that names the check list run; readers log it and must not reject on it. When a curated set changes (new chain added, new dimension added, operator semantics tweaked), a signed version field of this kind is what lets a consumer that pinned one version explicitly decide whether to accept another. This is cleaner than conflating condition set evolution with envelope schema evolution.
 
 Suggest the RFC allow providers to include an optional `provider_schema_version` field alongside the top-level `envelope_version` for exactly this case. Other categories may or may not need it; `wallet_state` definitely does.
 

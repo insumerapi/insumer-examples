@@ -6,7 +6,7 @@
  * 2. USDC classic-trustline token verification (Centre issuer)
  * 3. BENJI classic-trustline token verification (Franklin issuer)
  * 4. Multi-condition (XLM + USDC trustline in one call)
- * 5. Trust profile with Stellar institutional dimension (requires EVM wallet + stellarWallet)
+ * 5. Trust profile with Stellar rows evaluated (requires EVM wallet + stellarWallet)
  *
  * Soroban (smart-contract) balances are NOT visible — classic trustlines only.
  *

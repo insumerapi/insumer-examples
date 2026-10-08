@@ -31,7 +31,7 @@ if (!KEY) {
 const headers = { "Content-Type": "application/json", "X-API-Key": KEY };
 
 // The attestation response exactly as the API issued it: the attestation object,
-// its ECDSA signature and kid, and the post-quantum companion (pqSig, pqKid).
+// its ECDSA signature and kid, and the post-quantum signature (pqSig, pqKid).
 // Pass it unchanged to insumer-verify's verifyAttestation(); do not rebuild or
 // re-order the attestation, because the v1 scheme signs bare JSON.stringify output.
 function signedResponse(result) {
@@ -122,6 +122,9 @@ app.get("/discount", async (req, res) => {
   res.json({
     eligible: true,
     totalDiscount: data.totalDiscount,
+    // Present only when the store gives wallets without proof less: the
+    // discount this wallet gets once it proves ownership (walletProof).
+    ...(data.discountIfProven !== undefined && { discountIfProven: data.discountIfProven }),
     merchant: data.merchantName,
     breakdown: data.breakdown.map((t) => ({
       token: t.symbol,

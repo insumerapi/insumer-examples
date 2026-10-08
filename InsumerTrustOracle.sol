@@ -15,15 +15,15 @@ pragma solidity ^0.8.20;
  *
  * Score derivation (off-chain, by relayer):
  *   The trust profile returns summary.totalPassed and summary.totalChecks
- *   (145 base checks across 9 dimensions since condition set "2026-10": stablecoins,
+ *   (155 base checks across 10 dimensions in condition set "2026-10-08": stablecoins,
  *   governance, NFTs, staking, institutional stablecoins, tokenized treasuries,
- *   stablecoin deposits, wrapped bitcoin, names; up to 166 with the optional
+ *   stablecoin deposits, wrapped bitcoin, names, account; up to 176 with the optional
  *   Solana, XRPL, Bitcoin and Tron wallets). Every check is a presence check.
  *   Score = round(totalPassed / totalChecks * 100).
- *   Example: 19/145 passed = score 13. Empty wallet = score 0.
+ *   Example: 19/155 passed = score 12. Empty wallet = score 0.
  *   The denominator follows the signed conditionSetVersion: the 2026-10 set more than
- *   tripled it (45 -> 145), so every score computed this way is lower than it was under
- *   the previous set for the same holdings. A consumer that stored a threshold against
+ *   tripled it (45 -> 145) and the 2026-10-08 set raised it to 155, so a score computed
+ *   this way changes with the set for the same holdings. A consumer that stored a threshold against
  *   the old set must re-derive it; do not compare scores across condition sets.
  *
  * Freshness:
@@ -44,13 +44,13 @@ pragma solidity ^0.8.20;
  *   If no public key is provided (pubKeyX = 0, pubKeyY = 0), signature verification
  *   is skipped and the relayer is trusted to relay correct scores.
  *
- * Post-quantum companion:
- *   Since 2026-09-01 every attest and trust response also carries an ML-DSA-65
- *   post-quantum companion (pqSig/pqKid on the raw response, pqJwt beside jwt),
+ * Post-quantum signature:
+ *   Every attest and trust response is signed twice: ES256 and a post-quantum
+ *   ML-DSA-65 signature (pqSig/pqKid on the raw response, pqJwt beside jwt),
  *   and the JWKS carries two RFC 9964 AKP entries for its key (kids
  *   insumer-attest-pq1/insumer-trust-pq1) after the three EC entries. This
  *   contract verifies the classical ES256 signature only and does not consume
- *   the companion.
+ *   the post-quantum signature.
  *
  * RIP-7212 P256VERIFY precompile availability:
  *   Base, Optimism, Arbitrum, Polygon, Scroll, ZKsync, Celo, and other L2s.

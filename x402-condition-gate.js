@@ -30,7 +30,7 @@
  *   npm install express viem
  *   INSUMER_API_KEY=insr_live_... node x402-condition-gate.js
  *
- * Get a free API key (100 reads/day + 10 verification credits):
+ * Get a free API key (10 free verifications plus 100 requests a day):
  *   bash quickstart.sh
  *   # or:
  *   curl -s -X POST https://api.insumermodel.com/v1/keys/create \
@@ -199,7 +199,8 @@ app.use(express.json());
 // The protected resource. No payment → 402. Paid → gate on wallet eligibility.
 app.get("/premium", async (req, res) => {
   const resourceUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
-  const paymentHeader = req.get("X-PAYMENT");
+  // x402 v2 clients send PAYMENT-SIGNATURE; v1 clients send X-PAYMENT.
+  const paymentHeader = req.get("PAYMENT-SIGNATURE") || req.get("X-PAYMENT");
 
   // Step 1: no payment presented → ask for one (standard x402 402).
   if (!paymentHeader) {

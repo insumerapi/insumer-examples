@@ -19,9 +19,10 @@
  *                        delegation is unrevoked as of the anchored block,
  *                        and every caveat uses a recognized enforcer.
  *
- * Both are Base-only at launch (chainId 8453), cost 1 credit each (or $0.05
- * via x402 pay-per-call), and come back inside a signed attestation — never a
- * credential. Attestations containing a delegation condition expire in
+ * Both are Base-only (chainId 8453). One /v1/attest call costs 1 credit (or
+ * $0.05 via x402 pay-per-call) whether it carries one condition or both, and
+ * they come back inside a signed attestation, never a credential.
+ * Attestations containing a delegation condition expire in
  * 5 minutes, not the standard 30: revocation is one transaction away, so the
  * verdict window stays tight.
  *
@@ -39,10 +40,10 @@
  *   npm install viem
  *   INSUMER_API_KEY=insr_live_... node agent-delegation-verify.js
  *
- *   # or with no key at all — pay $0.10 per call (2 conditions) via x402:
+ *   # or with no key at all, pay $0.05 for the call via x402:
  *   DEMO_PRIVATE_KEY=0x... node agent-delegation-verify.js
  *
- * Get a free API key (100 reads/day + 10 verification credits):
+ * Get a free API key (10 free verifications plus 100 requests a day):
  *   bash quickstart.sh
  */
 
@@ -130,7 +131,7 @@ async function attest(body) {
   const payerKey = process.env.DEMO_PRIVATE_KEY;
   if (!payerKey) {
     console.error("Set INSUMER_API_KEY (see quickstart.sh), or DEMO_PRIVATE_KEY");
-    console.error("holding a wallet with USDC on Base to pay $0.10 via x402.");
+    console.error("holding a wallet with USDC on Base to pay $0.05 via x402.");
     process.exit(1);
   }
   const result = await payPerCall("/v1/attest", body, payerKey);
