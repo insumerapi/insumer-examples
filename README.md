@@ -362,7 +362,7 @@ The flow:
 |------|-------------|
 | [agenttalk-example.js](agenttalk-example.js) | Bilateral + multi-party flows: prove control → declare → join → verify → kick → leave |
 
-AgentTalk is a [Skye Meta](https://skyemeta.com) product; Skye Meta builds on InsumerAPI. | API: `https://skyemeta.com/api/agenttalk/` | Docs: [skyemeta.com/agenttalk](https://skyemeta.com/agenttalk/)
+AgentTalk is a [Skye Meta](https://skyemeta.com) product; Skye Meta builds on InsumerAPI. | API: `https://agenttalk.skyemeta.com/api/agenttalk/` | Docs: [agenttalk.skyemeta.com/llms-full.txt](https://agenttalk.skyemeta.com/llms-full.txt)
 
 ## Links
 

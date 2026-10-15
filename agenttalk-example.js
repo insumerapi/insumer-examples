@@ -31,8 +31,8 @@
  * That key is read only at runtime and never leaves your machine. In production
  * each agent uses its own funded wallet and its own key, which it never ships.
  *
- * API: https://skyemeta.com/api/agenttalk/
- * Docs: https://skyemeta.com/agenttalk/
+ * API: https://agenttalk.skyemeta.com/api/agenttalk/
+ * Docs: https://agenttalk.skyemeta.com/llms-full.txt
  *
  * Requires: viem (already a dependency of this repo) for keypair + signing.
  *
@@ -49,7 +49,7 @@
 const https = require("https");
 const { privateKeyToAccount, generatePrivateKey } = require("viem/accounts");
 
-const BASE_URL = "https://skyemeta.com/api/agenttalk";
+const BASE_URL = "https://agenttalk.skyemeta.com/api/agenttalk";
 
 // A real token condition: hold >= 1 USDC on Ethereum. A fresh wallet fails it
 // honestly; a funded wallet (via DEMO_PRIVATE_KEY) passes it.
