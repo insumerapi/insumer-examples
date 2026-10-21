@@ -92,11 +92,12 @@ interface IWalletStateVerifier {
 ///
 ///      Agents (wallet-based, no email):
 ///        POST https://api.insumermodel.com/v1/keys/buy
-///        body: {"txHash":"0x...","chainId":8453,"amount":5,"appName":"my-agent"}
-///        Agent sends USDC/USDT/BTC to the platform wallet, then POSTs the tx
-///        hash; the sending wallet is the identity. Stablecoin auto-detected
-///        from the transfer log. Minimum 5 stablecoin units; credits scale with
-///        amount.
+///        body: {"txHash":"0x...","chainId":8453,"amount":5,"appName":"my-agent",
+///               "senderSignature":"0x..."}
+///        Agent sends USDC to the platform wallet, then POSTs the tx hash
+///        with its signature over the text the API returns (a call without
+///        it answers 400 with that text); the wallet that paid is the
+///        identity. USDC only. Minimum 5 USDC; credits scale with amount.
 ///
 ///      API reference: https://insumermodel.com/developers/api-reference/
 ///      Attestation:   POST https://api.insumermodel.com/v1/attest
