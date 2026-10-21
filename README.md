@@ -251,7 +251,7 @@ Verification costs: 1 credit per attest (2 with `proof: "merkle"`), 3 per trust 
 Beyond the card tiers:
 
 - **x402 pay-per-call**: no key, no signup; USDC on Base, Polygon, Arbitrum, Arc, or Solana per call (see [Three Ways to Authenticate](#three-ways-to-authenticate))
-- **Crypto credit top-ups**: `POST /v1/credits/buy` with USDC, USDT, or BTC; volume-priced from 25 credits/$1 ($5–99) up to 50 credits/$1 ($500+)
+- **Crypto credit top-ups**: `POST /v1/credits/buy` with USDC, signed by the paying wallet on a first purchase or a wallet change; volume-priced from 25 credits/$1 ($5–99) up to 50 credits/$1 ($500+)
 - **Prepaid crypto keys**: `POST /v1/keys/purchase`: 30-day Pro or Enterprise keys paid in USDC/USDT/BTC, no card
 - **Wallet-native keys**: `POST /v1/keys/buy`: the sender wallet is the identity, no email needed
 
