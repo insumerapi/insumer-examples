@@ -1,7 +1,7 @@
 {
   "vector": "17-pq-jwt-companion",
   "description": "The JWT-format envelope: the ES256 jwt with its ML-DSA-65 sibling pqJwt.",
-  "note": "pqJwt is a separate compact JWS (alg ML-DSA-65, kid insumer-attest-pq1) over the same claims as jwt; the verifier binds it to jwt by the full claim set (same member names, deeply equal values, compared as parsed JSON and never by bytes), so the companion vouches for every claim read from jwt and cannot be transplanted from another artifact; vectors 24 and 25 are the refused cases. Handing the envelope object {data:{jwt,pqJwt}} to verifyAttestation routes to the JWT path. Expected pq status: verified.",
+  "note": "pqJwt is a separate compact JWS (alg ML-DSA-65, kid insumer-attest-pq1) over the same claims as jwt; the verifier binds it to jwt by the full claim set (same member names, deeply equal values, compared as parsed JSON and never by bytes), so the post-quantum signature vouches for every claim read from jwt and cannot be transplanted from another artifact; vectors 24 and 25 are the refused cases. Handing the envelope object {data:{jwt,pqJwt}} to verifyAttestation routes to the JWT path. Expected pq status: verified.",
   "options": {
     "jwksUrl": "https://insumermodel.com/.well-known/jwks.json"
   },

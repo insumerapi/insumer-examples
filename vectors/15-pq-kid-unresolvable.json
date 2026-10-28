@@ -1,7 +1,7 @@
 {
   "vector": "15-pq-kid-unresolvable",
-  "description": "Vector 12 presented with a pqKid that resolves to no key in the JWKS, under a verifier that requires the companion.",
-  "note": "Could-not-check is never a pass: the companion is UNVERIFIABLE. With pqRequiredFrom set to a past date (a live access decision after the verifier's own cutoff), unverifiable fails the artifact; without pqRequiredFrom it would be reported and not fail. Expected pq status: unverifiable.",
+  "description": "Vector 12 presented with a pqKid that resolves to no key in the JWKS, under a verifier that requires the post-quantum signature.",
+  "note": "Could-not-check is never a pass: the post-quantum signature is UNVERIFIABLE. With pqRequiredFrom set to a past date (a live access decision after the verifier's own cutoff), unverifiable fails the artifact; without pqRequiredFrom it would be reported and not fail. Expected pq status: unverifiable.",
   "options": {
     "jwksUrl": "https://insumermodel.com/.well-known/jwks.json",
     "pqRequiredFrom": "2026-09-01T00:00:00Z"

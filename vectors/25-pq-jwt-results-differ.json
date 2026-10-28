@@ -1,7 +1,7 @@
 {
   "vector": "25-pq-jwt-results-differ",
   "description": "The JWT-format envelope of vector 17 with results[0].met inverted inside the jwt; the pqJwt beside it is untouched and genuine.",
-  "note": "Derived from vector 17. Only results[0].met inside jwt was inverted; pass, jti, exp and sub are unchanged, and the ES256 signature segment and the whole pqJwt are byte-identical to vector 17. The condition hash still reproduces, because it covers the evaluated condition and not the verdict. The ES256 signature no longer verifies, and the companion is refuted: the full claim set is bound, so the per-condition results a relying party reads from the jwt must be the ones the companion signed. Requires insumer-verify 1.8.6 or later for the pq verdict; earlier releases compared jti, exp and pass only.",
+  "note": "Derived from vector 17. Only results[0].met inside jwt was inverted; pass, jti, exp and sub are unchanged, and the ES256 signature segment and the whole pqJwt are byte-identical to vector 17. The condition hash still reproduces, because it covers the evaluated condition and not the verdict. The ES256 signature no longer verifies, and the post-quantum signature is refuted: the full claim set is bound, so the per-condition results a relying party reads from the jwt must be the ones the pqJwt signed. Requires insumer-verify 1.8.6 or later for the pq verdict; earlier releases compared jti, exp and pass only.",
   "options": {
     "jwksUrl": "https://insumermodel.com/.well-known/jwks.json"
   },

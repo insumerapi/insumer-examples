@@ -1,7 +1,7 @@
 {
   "vector": "21-trust-under-attest-kid",
   "description": "Vector 18 presented under insumer-attest-v2, the kid that signs attestations.",
-  "note": "Must fail. The reverse of vector 20: a genuine trust profile relabelled with the attestation kid. The kid resolves to the same EC key, so a verifier that only resolves keys verifies nothing wrong and reports the signature valid; one that binds kids to artifact types refuses it. The companion verdict follows the classical kid, because the companion signs the exact classical preimage the classical kid selects: with the kid rewritten there is no correct preimage to rebuild, so the untouched pqSig cannot verify against anything, and insumer-verify 1.8.3 reports it refuted. The artifact fails on the classical signature regardless of how the companion is reported. Expected pq status: refuted.",
+  "note": "Must fail. The reverse of vector 20: a genuine trust profile relabelled with the attestation kid. The kid resolves to the same EC key, so a verifier that only resolves keys verifies nothing wrong and reports the signature valid; one that binds kids to artifact types refuses it. The post-quantum verdict follows the classical kid, because the post-quantum signature signs the exact classical preimage the classical kid selects: with the kid rewritten there is no correct preimage to rebuild, so the untouched pqSig cannot verify against anything, and insumer-verify 1.8.3 reports it refuted. The artifact fails on the classical signature regardless of how the post-quantum signature is reported. Expected pq status: refuted.",
   "options": {
     "jwksUrl": "https://insumermodel.com/.well-known/jwks.json"
   },

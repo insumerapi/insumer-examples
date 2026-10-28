@@ -1,7 +1,7 @@
 {
   "vector": "24-pq-jwt-subject-differs",
   "description": "The JWT-format envelope of vector 17 with the jwt's sub claim edited; the pqJwt beside it is untouched and genuine.",
-  "note": "Derived from vector 17. Only the sub claim inside jwt was changed (to 0x000000000000000000000000000000000000dEaD); the ES256 signature segment and the whole pqJwt are byte-identical to vector 17. The ES256 signature no longer verifies, and the companion is refuted as well: a pqJwt is bound to its jwt by the full claim set (same member names, deeply equal values), so a genuine companion does not vouch for a jwt whose subject differs from the one it signed. Requires insumer-verify 1.8.6 or later for the pq verdict; earlier releases compared jti, exp and pass only.",
+  "note": "Derived from vector 17. Only the sub claim inside jwt was changed (to 0x000000000000000000000000000000000000dEaD); the ES256 signature segment and the whole pqJwt are byte-identical to vector 17. The ES256 signature no longer verifies, and the post-quantum signature is refuted as well: a pqJwt is bound to its jwt by the full claim set (same member names, deeply equal values), so a genuine pqJwt does not vouch for a jwt whose subject differs from the one it signed. Requires insumer-verify 1.8.6 or later for the pq verdict; earlier releases compared jti, exp and pass only.",
   "options": {
     "jwksUrl": "https://insumermodel.com/.well-known/jwks.json"
   },

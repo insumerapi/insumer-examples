@@ -1,7 +1,7 @@
 {
   "vector": "27-jwt-format-token-edited",
-  "description": "Vector 26 with the sub claim edited inside data.jwt. The attestation, its signature, its companion and the pqJwt are untouched.",
-  "note": "Derived from vector 26. Only the sub claim inside data.jwt was changed (to 0x000000000000000000000000000000000000dEaD); every other byte of the response is as issued. The attestation still verifies, and its companion still verifies, because neither was touched and neither names the wallet. The response must be refused all the same, at checks.jwt: the wallet is read from the jwt, and the jwt in this response no longer carries a valid signature. A verifier that checks the attestation and stops reports this response valid. Requires insumer-verify 1.8.7 or later.",
+  "description": "Vector 26 with the sub claim edited inside data.jwt. The attestation, its ES256 and post-quantum signatures, and the pqJwt are untouched.",
+  "note": "Derived from vector 26. Only the sub claim inside data.jwt was changed (to 0x000000000000000000000000000000000000dEaD); every other byte of the response is as issued. The attestation still verifies, and its post-quantum signature still verifies, because neither was touched and neither names the wallet. The response must be refused all the same, at checks.jwt: the wallet is read from the jwt, and the jwt in this response no longer carries a valid signature. A verifier that checks the attestation and stops reports this response valid. Requires insumer-verify 1.8.7 or later.",
   "options": {
     "jwksUrl": "https://insumermodel.com/.well-known/jwks.json"
   },

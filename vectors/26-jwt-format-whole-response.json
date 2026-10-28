@@ -1,7 +1,7 @@
 {
   "vector": "26-jwt-format-whole-response",
   "description": "A format: \"jwt\" response exactly as the API returned it: the attestation with sig, kid, pqSig and pqKid, and beside it the ES256 jwt and its ML-DSA-65 sibling pqJwt.",
-  "note": "Issued 2026-09-20 under an insumer-attest-v2 key, saved verbatim. Vector 17 carries the two tokens alone; this is the whole object a caller actually receives. A verifier given it verifies the attestation and its companion, and the tokens as well, reported as checks.jwt: the ES256 signature of jwt under the same kid, its condition hashes, that it is the token of this attestation (jti, pass, results and exp equal the attestation's), and the pqJwt companion over the full claim set. Requires insumer-verify 1.8.7 or later for the jwt verdict; earlier releases verify the attestation and report nothing about the tokens.",
+  "note": "Issued 2026-09-20 under an insumer-attest-v2 key, saved verbatim. Vector 17 carries the two tokens alone; this is the whole object a caller actually receives. A verifier given it verifies the attestation and its post-quantum signature, and the tokens as well, reported as checks.jwt: the ES256 signature of jwt under the same kid, its condition hashes, that it is the token of this attestation (jti, pass, results and exp equal the attestation's), and the ML-DSA-65 pqJwt over the full claim set. Requires insumer-verify 1.8.7 or later for the jwt verdict; earlier releases verify the attestation and report nothing about the tokens.",
   "options": {
     "jwksUrl": "https://insumermodel.com/.well-known/jwks.json"
   },

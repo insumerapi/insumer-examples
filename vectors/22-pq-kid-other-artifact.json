@@ -1,7 +1,7 @@
 {
   "vector": "22-pq-kid-other-artifact",
-  "description": "Vector 12 presented with its pqKid changed to insumer-trust-pq1, the companion kid for trust profiles.",
-  "note": "The classical checks pass: sig and kid are untouched. The companion kid resolves, since insumer-trust-pq1 is in the JWKS as an AKP entry over the same ML-DSA-65 key as insumer-attest-pq1, but it names the other artifact type, so the companion is UNVERIFIABLE: a known kid that does not belong to this artifact is a mislabelled companion, not evidence for or against the signature, and it is never re-interpreted under the kid the verifier would have expected. No pqRequiredFrom is pinned, so the artifact is not refused for it; under a cutoff that has passed it would be, exactly as vector 15. Expected pq status: unverifiable.",
+  "description": "Vector 12 presented with its pqKid changed to insumer-trust-pq1, the post-quantum kid for trust profiles.",
+  "note": "The classical checks pass: sig and kid are untouched. The post-quantum kid resolves, since insumer-trust-pq1 is in the JWKS as an AKP entry over the same ML-DSA-65 key as insumer-attest-pq1, but it names the other artifact type, so the post-quantum signature is UNVERIFIABLE: under a known kid that does not belong to this artifact it is mislabelled, and is evidence neither for nor against the classical signature, and it is never re-interpreted under the kid the verifier would have expected. No pqRequiredFrom is pinned, so the artifact is not refused for it; under a cutoff that has passed it would be, exactly as vector 15. Expected pq status: unverifiable.",
   "options": {
     "jwksUrl": "https://insumermodel.com/.well-known/jwks.json"
   },

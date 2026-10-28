@@ -1,7 +1,7 @@
 {
   "vector": "16-pq-absent-under-cutoff",
   "description": "Vector 01 (issued before post-quantum signing existed) presented to a verifier whose cutoff has passed.",
-  "note": "In access mode past pqRequiredFrom, an absent companion fails the artifact: this is the cutoff working. In evidence mode (mode: \"evidence\") the same artifact is never refused; the verifier reports pq absent and, given pqActivatedAt = the anchored binding date 2026-09-01T23:30:53Z, existedAtIssuance: false. Expected pq status: absent.",
+  "note": "In access mode past pqRequiredFrom, an absent post-quantum signature fails the artifact: this is the cutoff working. In evidence mode (mode: \"evidence\") the same artifact is never refused; the verifier reports pq absent and, given pqActivatedAt = the anchored binding date 2026-09-01T23:30:53Z, existedAtIssuance: false. Expected pq status: absent.",
   "options": {
     "jwksUrl": "https://insumermodel.com/.well-known/jwks.json",
     "pqRequiredFrom": "2026-09-01T00:00:00Z"

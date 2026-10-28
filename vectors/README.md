@@ -42,27 +42,27 @@ under are pinned in `package.json` in this directory, with a lockfile:
 
 The Python package of the same name ([PyPI](https://pypi.org/project/insumer-verify/), 1.10.0, built in the same repository under `python/`) produces the same 27 verdicts from this file; its test suite runs them offline against a saved copy of the JWKS, with `dilithium-py` in the role `@noble/post-quantum` plays here. Install it with `pip install "insumer-verify[pq]"`: a plain `pip install insumer-verify` leaves `dilithium-py` out, and the same ten vectors listed below then stop matching, without an error. Two implementations in two languages agreeing on every vector is still the issuer agreeing with itself; the invitation to disagree stands.
 
-`@noble/post-quantum` is what lets the verifier check the ML-DSA-65 companion. Without it every
-companion is reported as `unverifiable`, and ten vectors stop matching their expectations: 12, 13,
-17, 18, 26 and 27, whose companions should verify, and 14, 21, 24 and 25, whose companions should be
+`@noble/post-quantum` is what lets the verifier check the ML-DSA-65 signature. Without it every
+post-quantum signature is reported as `unverifiable`, and ten vectors stop matching their expectations: 12, 13,
+17, 18, 26 and 27, whose post-quantum signatures should verify, and 14, 21, 24 and 25, whose post-quantum signatures should be
 refuted. The
-other companion cases are unaffected because they already expect something other than a verified or
-refuted companion. A run missing the library reports 17/27 rather than failing loudly, which is why
+other post-quantum cases are unaffected because they already expect something other than a verified or
+refuted post-quantum signature. A run missing the library reports 17/27 rather than failing loudly, which is why
 it is a pinned dependency here rather than an optional extra.
 
 Earlier verifiers disagree with the stated expectations, which is the reason the versions are
-pinned rather than a caveat on them: 1.8.0 reports the companion on attestations but not on trust
+pinned rather than a caveat on them: 1.8.0 reports the post-quantum signature on attestations but not on trust
 profiles, and 1.8.0 and 1.8.1 accept the missing `kid` of vector 19 and report the mislabelled
-companion of vector 22 as verified. The kid rules those two vectors exercise arrived in 1.8.2.
-Releases before 1.8.6 report the companions of vectors 24 and 25 as verified: they bound a `pqJwt`
+post-quantum signature of vector 22 as verified. The kid rules those two vectors exercise arrived in 1.8.2.
+Releases before 1.8.6 report the post-quantum signatures of vectors 24 and 25 as verified: they bound a `pqJwt`
 to its `jwt` by `jti`, `exp` and `pass`, and the binding of the full claim set that those two
 vectors exercise arrived in 1.8.6. Releases before 1.8.7 verify the attestation in vectors 26 and 27
 and report nothing about the tokens beside it, so they have no `jwt` verdict to compare and call
 vector 27 as sound as vector 26; the verdict on a whole `format: "jwt"` response arrived in 1.8.7.
 Releases before 1.9.2 report vectors 11 and 19 differently: once the `kid` failed to select a key
-they reported every check failed and the companion unverifiable, whatever could still be computed.
+they reported every check failed and the post-quantum signature unverifiable, whatever could still be computed.
 From 1.9.2 each check reports its own result there: the condition hashes reproduce, freshness and
-expiry report their own results, and the companion is absent on 11 (none was transmitted) and
+expiry report their own results, and the post-quantum signature is absent on 11 (none was transmitted) and
 unverifiable on 19 (transmitted, with no preimage to rebuild it over). The expected blocks of 11
 and 19 state the 1.9.2 verdicts.
 
@@ -107,7 +107,7 @@ at it to reproduce the published verdicts without depending on the live endpoint
 | `response` | The artifact as the verifier receives it. On the twelve issuer responses it is the API response verbatim, nothing reformatted, reordered or trimmed. On the fourteen edited derivations it is that response carrying the single deliberate edit its row names. On 16 it is vector 01's response unchanged, since that vector varies the options rather than the bytes. |
 | `recompute` | For each result: the canonical `evaluatedCondition` byte string, the claimed `conditionHash`, whether the hash reproduces from those bytes, and the chain anchor. |
 | `options` | The verifier options this vector is evaluated under. Pinned per vector, because a verdict is a function of the input and the options together. |
-| `expected` | The five verdicts a correct verifier must produce (signature, condition hashes, freshness, expiry, post-quantum companion), the companion's status (`verified`, `refuted`, `absent`, `unverifiable`), and where relevant the `pass` and per-result `met` values. A trust-profile vector has four verdicts (there are no condition hashes to check on the trust path) and an `expected.trust` block naming the summary counts and the checks that carry the not-evaluated marker. |
+| `expected` | The five verdicts a correct verifier must produce (signature, condition hashes, freshness, expiry, post-quantum signature), the post-quantum signature's status (`verified`, `refuted`, `absent`, `unverifiable`), and where relevant the `pass` and per-result `met` values. A trust-profile vector has four verdicts (there are no condition hashes to check on the trust path) and an `expected.trust` block naming the summary counts and the checks that carry the not-evaluated marker. |
 
 ## The vectors
 
@@ -124,22 +124,22 @@ at it to reproduce the published verdicts without depending on the live endpoint
 | 09 | 01 with one character of the signature changed | signature fails, hash still passes |
 | 10 | 01 with the claimed `conditionHash` replaced | signature **and** hash fail |
 | 11 | 01 presented with a `kid` that resolves to no key | fails closed |
-| 12 | A v2 attestation carrying the post-quantum companion (`pqSig`, `pqKid`) as issued | all checks pass, companion `verified` |
-| 13 | A v1 (frozen bare-JSON scheme) attestation carrying the same companion | all checks pass, companion `verified` |
-| 14 | 12 with one byte of `pqSig` altered | classical checks pass, companion `refuted`, artifact fails |
-| 15 | 12 presented with a `pqKid` that resolves to no key, under a verifier that requires the companion | companion `unverifiable`, fails under the cutoff |
-| 16 | 01, issued before the companion existed, under a verifier whose cutoff has passed | companion `absent`, fails under the cutoff |
-| 17 | The JWT envelope: the ES256 `jwt` with its ML-DSA-65 sibling `pqJwt` | all checks pass, companion `verified` |
-| 18 | A trust profile from `POST /v1/trust` with only the EVM wallet supplied, six checks carrying the not-evaluated marker | all checks pass, companion `verified`, unevaluated checks are not failures |
-| 19 | 13 with its `kid` removed | fails closed, companion `unverifiable` |
+| 12 | A v2 attestation carrying the post-quantum signature (`pqSig`, `pqKid`) as issued | all checks pass, post-quantum signature `verified` |
+| 13 | A v1 (frozen bare-JSON scheme) attestation carrying the same post-quantum signature | all checks pass, post-quantum signature `verified` |
+| 14 | 12 with one byte of `pqSig` altered | classical checks pass, post-quantum signature `refuted`, artifact fails |
+| 15 | 12 presented with a `pqKid` that resolves to no key, under a verifier that requires the post-quantum signature | post-quantum signature `unverifiable`, fails under the cutoff |
+| 16 | 01, issued before post-quantum signing existed, under a verifier whose cutoff has passed | post-quantum signature `absent`, fails under the cutoff |
+| 17 | The JWT envelope: the ES256 `jwt` with its ML-DSA-65 sibling `pqJwt` | all checks pass, post-quantum signature `verified` |
+| 18 | A trust profile from `POST /v1/trust` with only the EVM wallet supplied, six checks carrying the not-evaluated marker | all checks pass, post-quantum signature `verified`, unevaluated checks are not failures |
+| 19 | 13 with its `kid` removed | fails closed, post-quantum signature `unverifiable` |
 | 20 | 01 presented under `insumer-trust-v2`, the kid that signs trust profiles | signature fails, hash still passes |
-| 21 | 18 presented under `insumer-attest-v2`, the kid that signs attestations | signature fails, companion `refuted` |
-| 22 | 12 with its `pqKid` changed to `insumer-trust-pq1`, the companion kid for trust profiles | classical checks pass, companion `unverifiable`, not refused |
+| 21 | 18 presented under `insumer-attest-v2`, the kid that signs attestations | signature fails, post-quantum signature `refuted` |
+| 22 | 12 with its `pqKid` changed to `insumer-trust-pq1`, the post-quantum kid for trust profiles | classical checks pass, post-quantum signature `unverifiable`, not refused |
 | 23 | 01 with an unknown `kid`, to a verifier given no JWKS URL | signature fails, hash still passes, never falls back to a key at hand |
-| 24 | 17 with the `sub` claim inside `jwt` changed, the `pqJwt` beside it untouched | signature fails, hash still passes, companion `refuted` |
-| 25 | 17 with `results[0].met` inverted inside `jwt`, the `pqJwt` beside it untouched | signature fails, hash still passes, companion `refuted` |
-| 26 | A whole `format: "jwt"` response as issued: the attestation with its signature and companion, and the `jwt` and `pqJwt` beside it | all checks pass, companion `verified`, `checks.jwt` passes |
-| 27 | 26 with the `sub` claim inside `data.jwt` changed, everything else untouched | the attestation and its companion still verify, `checks.jwt` fails, artifact fails |
+| 24 | 17 with the `sub` claim inside `jwt` changed, the `pqJwt` beside it untouched | signature fails, hash still passes, post-quantum signature `refuted` |
+| 25 | 17 with `results[0].met` inverted inside `jwt`, the `pqJwt` beside it untouched | signature fails, hash still passes, post-quantum signature `refuted` |
+| 26 | A whole `format: "jwt"` response as issued: the attestation with its ES256 and post-quantum signatures, and the `jwt` and `pqJwt` beside it | all checks pass, post-quantum signature `verified`, `checks.jwt` passes |
+| 27 | 26 with the `sub` claim inside `data.jwt` changed, everything else untouched | the attestation and its post-quantum signature still verify, `checks.jwt` fails, artifact fails |
 
 ## Which of them a verifier must refuse
 
@@ -153,8 +153,8 @@ fourteen a correct verifier must refuse are the ones carrying at least one expec
 ```
 
 Within those fourteen, 14, 15 and 16 fail only at `checks.pq`, 27 fails only at `checks.jwt`, and
-11, 19, 21, 24 and 25 fail at both the classical and the companion layer. Vector 22 is not among them: outside `expiry` it carries no
-expected `false`, and its companion reports `unverifiable`, which is reported without refusing the
+11, 19, 21, 24 and 25 fail at both the classical and the post-quantum layer. Vector 22 is not among them: outside `expiry` it carries no
+expected `false`, and its post-quantum signature reports `unverifiable`, which is reported without refusing the
 artifact.
 
 The predicate excludes `attestation.pass` deliberately. A signed `false` there is a verdict about
@@ -171,9 +171,9 @@ Three of the derived cases are chosen to be hard to pass by accident:
   the first key when the `kid` matches nothing will happily check an unknown or forged `kid`
   against whichever key is listed first. `insumer-verify` has refused this from 1.7.0 onward.
   The refusal is the signature verdict's alone: the condition hashes still reproduce, freshness
-  and expiry report their own results, and the companion is absent, since none was transmitted.
+  and expiry report their own results, and the post-quantum signature is absent, since none was transmitted.
 
-Vectors 24 and 25 are about what a `pqJwt` vouches for. In the JWT format the companion is a
+Vectors 24 and 25 are about what a `pqJwt` vouches for. In the JWT format the post-quantum signature is a
 second compact JWS carrying the same claims as `jwt`, and a verifier binds the two by the full
 claim set: the same member names, and for every member a deeply equal value. Both vectors take
 the genuine pair of vector 17, edit one claim inside `jwt`, and leave the ES256 signature segment
@@ -184,9 +184,9 @@ and the whole `pqJwt` byte-identical to vector 17:
   that compares a handful of top-level claims sees nothing different.
 
 On both, the ES256 signature fails, which is the edit being caught at the classical layer. The
-companion verdict is the point: the `pqJwt` still verifies under its own key, since nothing in
+post-quantum verdict is the point: the `pqJwt` still verifies under its own key, since nothing in
 it was touched, and it must be reported `refuted` all the same, because it did not sign the
-claims the `jwt` beside it now carries. A companion is worth having only if its verdict stays
+claims the `jwt` beside it now carries. A post-quantum signature is worth having only if its verdict stays
 right when the classical one cannot be relied on, and a relying party reads `sub` and `results`
 from the `jwt`. Comparison is by parsed value, never by bytes: two serializers may order members
 differently, and a genuine pair must not be refused for that.
@@ -198,7 +198,7 @@ handed to a verifier. The signed attestation does not in general name the wallet
 in `sub`. So a verifier that checks the attestation and stops has said nothing about the one place
 the wallet is read from. **26** is that whole response as issued, and every verdict passes,
 `checks.jwt` among them. **27** changes `sub` inside `data.jwt` and nothing else: the attestation
-and its companion still verify, since neither was touched, and the response is refused at
+and its post-quantum signature still verify, since neither was touched, and the response is refused at
 `checks.jwt`. The tokens are also bound to the attestation beside them (`jti`, `pass`, `results` and
 `exp` must equal its `id`, `pass`, `results` and `expiresAt`), so a genuine token pair lifted from
 another attestation is refused as well.
@@ -207,7 +207,7 @@ Vectors 19 to 23 are about what a `kid` is allowed to do. A `kid` selects a key,
 scheme, and an artifact type, and a verifier has to honour all three:
 
 - **19** has no `kid` at all. Nothing selects a key or a scheme, so the signature cannot be
-  verified; the condition hashes still reproduce, and the companion it carries is unverifiable,
+  verified; the condition hashes still reproduce, and the post-quantum signature it carries is unverifiable,
   since with no `kid` there is no preimage to rebuild it over. It
   is derived from the v1-signed vector 13 because that is the case a fallback accepts: a
   verifier that defaults to the frozen bare-JSON scheme and to whatever key is at hand reports
@@ -215,19 +215,19 @@ scheme, and an artifact type, and a verifier has to honour all three:
 - **20** and **21** are the same mislabelling in both directions: an attestation under the
   trust kid, and a trust profile under the attestation kid. Both kids resolve, and to the same
   EC key, so a verifier that resolves the key and stops there verifies nothing wrong. A kid
-  is bound to its artifact type, and the binding is what refuses these. On 21 the companion
-  reads `refuted` as well: the companion signs the exact classical preimage the classical kid
+  is bound to its artifact type, and the binding is what refuses these. On 21 the post-quantum
+  signature reads `refuted` as well: it signs the exact classical preimage the classical kid
   selects, so once the kid is rewritten there is no correct preimage to rebuild it over.
-- **22** rewrites the `pqKid` to the other artifact's companion kid. The classical checks are
-  untouched and pass. The companion kid resolves but names the wrong artifact type, so the
-  companion is `unverifiable`: a mislabelled companion is evidence of nothing, and it is never
+- **22** rewrites the `pqKid` to the other artifact's post-quantum kid. The classical checks are
+  untouched and pass. The post-quantum kid resolves but names the wrong artifact type, so the
+  post-quantum signature is `unverifiable`: a mislabelled post-quantum signature is evidence of nothing, and it is never
   re-interpreted under the kid the verifier expected. Without a `pqRequiredFrom` cutoff that is
   reported and not refused; under a cutoff that has passed it fails, as vector 15 does.
 - **23** is vector 11 without the JWKS fetch. On 11 the verifier is given a JWKS, fetches it and
   finds no key for the `kid`; on 23 it was given no JWKS URL, so it never fetches and holds only
   its built-in key, which the `kid` does not name. Both report the signature as could-not-verify,
   with reasons that differ, and both complete the hash, freshness and expiry checks, which do not
-  depend on key resolution, and report the companion absent. (Before `insumer-verify` 1.9.2, vector
+  depend on key resolution, and report the post-quantum signature absent. (Before `insumer-verify` 1.9.2, vector
   11 was published with every check failed once the `kid` failed to resolve; the two now publish
   the same verdicts from the same signed bytes.) On 23 the verifier holds
   a built-in key; the `kid` names no key it knows. It must still fail, and it must fail as
@@ -318,13 +318,13 @@ scheme at all. The rest are v2: attestations under
 `insumer-attest-v2`, and the trust profiles under `insumer-trust-v2`, whose preimage is the
 tag `insumer.trust.v2`, a newline, and the canonical JSON of the whole trust object with
 `expiresAt` inside it. Vector 13 is signed under the v1 scheme (the frozen bare-JSON preimage
-under `insumer-attest-v1`) and carries the same companion, because keys issued before the v2
+under `insumer-attest-v1`) and carries the same post-quantum signature, because keys issued before the v2
 rollout still sign v1 and remain verifiable unchanged; that is a live path rather than a
 historical one. A verifier that implements only v2 passes every other vector here and fails
 vector 13, which the specification requires it to select by `kid`.
 
-Thirteen vectors carry a post-quantum companion: 12, 13, 14, 15, 17, 18, 19, 21, 22 and 24 to 27. The rest
-exercise the companion rules without carrying one, reporting `absent`. Its verdict is reported separately from the classical checks (spec
+Thirteen vectors carry a post-quantum signature: 12, 13, 14, 15, 17, 18, 19, 21, 22 and 24 to 27. The rest
+exercise the post-quantum rules without carrying one, reporting `absent`. Its verdict is reported separately from the classical checks (spec
 Section 12, Check 6): `refuted` always fails the artifact; `absent` and
 `unverifiable` fail only under the verifier's own `pqRequiredFrom` cutoff, judged by the
 verifier's clock, never by a timestamp inside the artifact.
