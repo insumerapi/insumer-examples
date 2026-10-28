@@ -40,7 +40,7 @@ under are pinned in `package.json` in this directory, with a lockfile:
 | `insumer-verify` | 1.9.2 |
 | `@noble/post-quantum` | 0.7.1 |
 
-The Python package of the same name ([PyPI](https://pypi.org/project/insumer-verify/), 1.9.2.1, built in the same repository under `python/`) produces the same 27 verdicts from this file; its test suite runs them offline against a saved copy of the JWKS, with `dilithium-py` in the role `@noble/post-quantum` plays here. Two implementations in two languages agreeing on every vector is still the issuer agreeing with itself; the invitation to disagree stands.
+The Python package of the same name ([PyPI](https://pypi.org/project/insumer-verify/), 1.10.0, built in the same repository under `python/`) produces the same 27 verdicts from this file; its test suite runs them offline against a saved copy of the JWKS, with `dilithium-py` in the role `@noble/post-quantum` plays here. Install it with `pip install "insumer-verify[pq]"`: a plain `pip install insumer-verify` leaves `dilithium-py` out, and the same ten vectors listed below then stop matching, without an error. Two implementations in two languages agreeing on every vector is still the issuer agreeing with itself; the invitation to disagree stands.
 
 `@noble/post-quantum` is what lets the verifier check the ML-DSA-65 companion. Without it every
 companion is reported as `unverifiable`, and ten vectors stop matching their expectations: 12, 13,
