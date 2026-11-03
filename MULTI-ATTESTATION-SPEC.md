@@ -880,7 +880,6 @@ function verifyMultiAttestation(payload, requiredTypes):
             continue
         key = fetchJWKS(pinned, att.kid, att.alg)
         if isJWT(att.sig):
-                continue
             valid = verifyJWT(att.sig, key, att.alg)
         else:
             message = JSON.stringify(att.signed)
